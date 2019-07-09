@@ -1,0 +1,21 @@
+<div>
+  <div>
+      <app-score [score]='score' ></app-score>
+  </div>
+  <main>
+    <div>
+      <app-cards [cardData]='cards[0]' (sendEvent)='cardClicked($event)'></app-cards>
+      <app-cards [cardData]='cards[1]' (sendEvent)='cardClicked($event)'></app-cards>
+    </div> 
+    <div>
+        <app-cards [cardData]='cards[2]' (sendEvent)='cardClicked($event)'></app-cards>
+        <app-cards [cardData]='cards[3]' (sendEvent)='cardClicked($event)'></app-cards>
+    </div>   
+
+  </main>
+  <div>
+      <app-timing [timer]='timing'></app-timing>
+  </div>
+</div>
+
+

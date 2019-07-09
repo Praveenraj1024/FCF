@@ -1,0 +1,11 @@
+.card-active{
+
+  background-color: orange;
+}
+
+div{
+  width: 100px;
+  height: 100px;
+  text-align: center;
+  border: 2px solid black;
+}
