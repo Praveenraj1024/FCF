@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-// import { timer } from 'rxjs';
+import { timer } from 'rxjs';
 
 @Component({
   selector: 'app-gamecomponent',
@@ -9,7 +9,8 @@ import { Component, OnInit } from '@angular/core';
 export class GamecomponentComponent implements OnInit {
   public cards = [];
   score = 0;
-  timing = 0;
+  timeLeft = 6;
+  fullTime = 6;
   missed = 0;
   t: any;
   public isGameActive = false;
@@ -19,23 +20,37 @@ export class GamecomponentComponent implements OnInit {
   public cardClickTimeInterval = 1000;
   // public gameType = 2;
   gameTiming: any;
-  public gameTimeLimit =  10000;
+  // public gameTimeLimit =  10000;
+  timerr: any;
+  subscription: any;
 
   constructor() { }
 
   ngOnInit() {
     this.createCards();
-    this.gameTiming = setTimeout(() => {
-    }, this.gameTimeLimit);
-    console.log(this.gameTiming);
-    this.cardClickTimer = setInterval(() => {
-      this.pickCard();
-    }, this.cardClickTimeInterval);
-    this.isGameActive = true;
-    console.log(typeof(this.timing));
 
-    // this.timedCount();
+    // this.gameTiming = setTimeout(() => {
+    // }, this.gameTimeLimit);
+    // console.log(this.gameTiming);
+    if (this.timeLeft > 0) {
+      this.cardClickTimer = setInterval(() => {
+        this.pickCard();
+      }, this.cardClickTimeInterval);
+    }
+    this.isGameActive = true;
+    // console.log(typeof(this.timing));
+    this.timing();
   }
+
+
+  timing() {
+    this.timerr = timer(1000, 1000);
+    if (this.timeLeft === 0) {
+    } else {
+      this.subscription = this.timerr.subscribe(v => this.timeLeft = (this.fullTime - v));
+    }
+  }
+
 
 
   // timedCount() {
@@ -67,8 +82,8 @@ export class GamecomponentComponent implements OnInit {
         cardId: cardIndex,
         isActive: false
       });
+
     }
-    console.log(this.cards[0]);
 
   }
   pickCard() {
@@ -79,12 +94,19 @@ export class GamecomponentComponent implements OnInit {
       card = this.cards[this.randomCardId()];
     }
     this.selectedCard = card;
-    // tslint:disable-next-line: no-string-literal
-    this.selectedCard['isActive'] = true;
+    if (this.timeLeft > 0) {
+      // tslint:disable-next-line: no-string-literal
+      this.selectedCard['isActive'] = true;
+
+    }
     this.hasChance = true;
   }
 
   public randomCardId(): number {
+    if (this.timeLeft === 0) {
+      this.subscription.unsubscribe();
+    }
+
     return Math.floor(Math.random() * 4);
   }
 
@@ -92,8 +114,9 @@ export class GamecomponentComponent implements OnInit {
   cardClicked(cardId: number) {
     if (this.isGameActive) {
 // tslint:disable-next-line: no-string-literal
-      if ((this.selectedCard['cardId'] === cardId) && (this.hasChance === true)) {
+      if ((this.selectedCard['cardId'] === cardId) && (this.hasChance === true) && (this.timeLeft > 0)) {
         this.score++;
+        // console.log(this.score);
         this.hasChance = false;
         clearInterval(this.cardClickTimer);
         this.pickCard();
